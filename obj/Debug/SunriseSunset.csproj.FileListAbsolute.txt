@@ -1,0 +1,12 @@
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\_Random Code\SunriseSunset\bin\Debug\SunriseSunset.exe.config
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\_Random Code\SunriseSunset\bin\Debug\SunriseSunset.exe
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\_Random Code\SunriseSunset\bin\Debug\SunriseSunset.pdb
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\_Random Code\SunriseSunset\obj\Debug\SunriseSunset.csprojResolveAssemblyReference.cache
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\_Random Code\SunriseSunset\obj\Debug\SunriseSunset.exe
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\_Random Code\SunriseSunset\obj\Debug\SunriseSunset.pdb
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\SunriseSunset\bin\Debug\SunriseSunset.exe.config
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\SunriseSunset\obj\Debug\SunriseSunset.exe
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\SunriseSunset\obj\Debug\SunriseSunset.pdb
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\SunriseSunsetCalculator\bin\Debug\SunriseSunset.exe.config
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\SunriseSunsetCalculator\obj\Debug\SunriseSunset.exe
+C:\Users\Christopher\Downloads\Other\DesertStarSystems\SunriseSunsetCalculator\obj\Debug\SunriseSunset.pdb
