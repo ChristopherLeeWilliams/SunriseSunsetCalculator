@@ -10,3 +10,9 @@ C:\Users\Christopher\Downloads\Other\DesertStarSystems\SunriseSunset\obj\Debug\S
 C:\Users\Christopher\Downloads\Other\DesertStarSystems\SunriseSunsetCalculator\bin\Debug\SunriseSunset.exe.config
 C:\Users\Christopher\Downloads\Other\DesertStarSystems\SunriseSunsetCalculator\obj\Debug\SunriseSunset.exe
 C:\Users\Christopher\Downloads\Other\DesertStarSystems\SunriseSunsetCalculator\obj\Debug\SunriseSunset.pdb
+C:\Users\Benjamin\Documents\GitHub\RiseSetProject\SunriseSunsetCalculator\bin\Debug\SunriseSunset.exe.config
+C:\Users\Benjamin\Documents\GitHub\RiseSetProject\SunriseSunsetCalculator\obj\Debug\SunriseSunset.exe
+C:\Users\Benjamin\Documents\GitHub\RiseSetProject\SunriseSunsetCalculator\obj\Debug\SunriseSunset.pdb
+C:\Users\Benjamin\Documents\GitHub\RiseSetProject\SunriseSunsetCalculator\bin\Debug\SunriseSunset.exe
+C:\Users\Benjamin\Documents\GitHub\RiseSetProject\SunriseSunsetCalculator\bin\Debug\SunriseSunset.pdb
+C:\Users\Benjamin\Documents\GitHub\RiseSetProject\SunriseSunsetCalculator\obj\Debug\SunriseSunset.csprojResolveAssemblyReference.cache
