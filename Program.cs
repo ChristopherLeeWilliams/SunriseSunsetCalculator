@@ -8,6 +8,16 @@ using System.Diagnostics;
 
 namespace SunriseSunset
 {
+    public static class SolarPositionProvider {
+        static SolarPositionProvider() {
+
+        }
+        public static double equationOfCenter(double m) {
+            m = m * (Math.PI / 180);
+            return ((1.9148 * Math.Sin(m)) + (0.0200 * Math.Sin(2 * m)) + (0.0003 * Math.Sin(3 * m)));
+        }
+
+    }
     class Program
     {
         static void Main(string[] args)
@@ -177,6 +187,10 @@ namespace SunriseSunset
 
             #region Setters
 
+            public double Latitude {
+                get;
+                set;
+            }
             public void setLatitude(double _latitude)
             {
                 latitude = _latitude;
