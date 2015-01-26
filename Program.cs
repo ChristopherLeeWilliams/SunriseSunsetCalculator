@@ -8,65 +8,106 @@ using System.Diagnostics;
 
 namespace SunriseSunset
 {
-    public static class SolarPositionProvider {
-        static SolarPositionProvider() {
 
-        }
-        public static double equationOfCenter(double m) {
-            m = m * (Math.PI / 180);
-            return ((1.9148 * Math.Sin(m)) + (0.0200 * Math.Sin(2 * m)) + (0.0003 * Math.Sin(3 * m)));
-        }
-
-    }
     class Program
     {
         static void Main(string[] args)
         {
-            Location test = new Location();
+            Location test;
 
-            test.setLongitude(139.691706);  // Tokyo, Japan
-            test.setLatitude(35.689487);  
-
+            while(true)
+            {
+            // Run Operations
+            test = createLocation();
             calculateSunriseSunset(test);
 
-            //Console.WriteLine("Sunrise: {0}   Sunset: {1}", test.getSunrise(), test.getSunset());
+            // Asks user to repeat
+            Console.WriteLine("Would you like to use another location? (y/n)");
+            if (Console.ReadLine() != "y" || Console.ReadLine() != "Y") { break; }
+            Console.WriteLine("\n");
+            }
+    
         }
 
-        static void calculateSunriseSunset(Location a)
+        static void adjustOffset(double[] a, double[] b)
         {
-            double lng = a.getLongitude();
-            double lat = a.getLatitude();
-            double n = julianCycle(lng);
-            double j = approxJulianDateSolarNoon(n, lng);
-            double _meanAnomally = meanAnomally(j);
-            double center = equationOfCenter(_meanAnomally);
-            double eLNG = eclipticalLongitude(_meanAnomally, center);
-            double jTransit = julianTransit(j,_meanAnomally,eLNG);
-            double _sunDeclination = sunDeclination(eLNG);
-            double _hourAngle = hourAngle(lat, _sunDeclination);
+            Console.WriteLine("\nLocal offset to UTC time: (Ex: California +8, Tokyo -9)");
+            int offset = Convert.ToInt32(Console.ReadLine());
 
-            // Recalculate j, using hourAngle
-            j = approxJulianDateSolarNoon(n,_hourAngle+lng);
+            // Sunrise:
+            a[3] = a[3] + 24 - offset; // Add 24 to local hour to prevent negative hours after calculating offset
+            a[1]--;                    // Subtract 1 day, to adjust for adding 24 hours
 
-            // Calculate sunrise/sunset in Julian date/time
-            double _sunset = sunset(j, _meanAnomally, eLNG); 
-            double _sunrise = sunrise(jTransit, _sunset);
+            while (a[3] >= 24)         // While the hours are still greater than or equal to 24
+            {
+                a[3] -= 24;            // subtract 24 hours
+                a[1]++;                // and add 1 to day
+            }
 
-            // Convert Julian Date to readable calendar date/time
+            // Sunset: 
+            b[3] = b[3] + 24 - offset;
+            b[1]--;
 
-            // Need to add/subtract time zone difference for calculation (Ex: Tokyo sunrise +9 = local sunrise)
-            // Console.WriteLine("Local offset from UTC time: ");
-            // int offset = Convert.ToInt32(Console.ReadLine()); 
+            while (b[3] >= 24)
+            {
+                b[3] -= 24;
+                b[2]++;
+            }
 
-            // Set sunrise/sunset time of location object
-            a.setSunrise(_sunrise);
-            a.setSunset(_sunset);
-           Console.WriteLine("Sunrise:  {0}   \nSunset:   {1}",_sunrise, _sunset);
         }
 
         static double approxJulianDateSolarNoon(double n, double lng)
         {
             return (2451545 + 0.0009 + (lng/360) + n);
+        }
+
+        static void calculateSunriseSunset(Location a)
+        {
+            double lng = a.Longitude;
+            double lat = a.Latitude;
+            double n = julianCycle(lng);
+            double j = approxJulianDateSolarNoon(n, lng);
+            double _meanAnomally = meanAnomally(j);
+            double center = equationOfCenter(_meanAnomally);
+            double eLNG = eclipticalLongitude(_meanAnomally, center);
+            double jTransit = julianTransit(j, _meanAnomally, eLNG);
+            double _sunDeclination = sunDeclination(eLNG);
+            double _hourAngle = hourAngle(lat, _sunDeclination);
+
+            // Recalculate j, using hourAngle
+            j = approxJulianDateSolarNoon(n, _hourAngle + lng);
+
+            // Calculate sunrise/sunset in Julian date/time
+            double _sunset = sunset(j, _meanAnomally, eLNG);
+            double _sunrise = sunrise(jTransit, _sunset);
+
+            // Set sunrise/sunset time of location object
+            a.Sunrise = julianToCalendar(_sunrise);
+            a.Sunset = julianToCalendar(_sunset);
+
+            // Adjust for local offset from UTC time
+            adjustOffset(a.Sunrise, a.Sunset);
+
+            // Print the adjust times
+            printSunriseSunset(a.Sunrise, a.Sunset);
+        }
+
+        static Location createLocation()
+        {
+            Location test = new Location();
+
+            Console.Write("Enter latitude  [North = +  South = -]: ");
+            string lat = Console.ReadLine();
+            double latitude = Double.Parse(lat);
+
+            Console.Write("Enter longitude [West = +  East = -]: ");
+            string lng = Console.ReadLine();
+            double longitude = Double.Parse(lng);
+
+            test.Longitude = longitude;  // Examples: Tokyo, Japan (35.689487, -139.691706, offset -9)
+            test.Latitude = latitude;    //           Marina, California (36.677660, 121.762049, offset +8)
+
+            return test;
         }
 
         static double eclipticalLongitude(double m, double c)
@@ -103,7 +144,7 @@ namespace SunriseSunset
 
         static double julianDate()
         {
-            Console.Write("Month: ");
+            Console.Write("\nMonth: ");
             int month = Convert.ToInt32(Console.ReadLine());
 
             Console.Write("Day: ");
@@ -121,6 +162,49 @@ namespace SunriseSunset
             return N;
         }
 
+        static double[] julianToCalendar(double jDate)
+        {            
+            jDate += .5;
+            int Z = (int)(Math.Floor(jDate));
+            double F = jDate % 1;
+
+            int a = 0;
+            int A = Z;
+
+            if (Z >= 2299161)
+            {
+                a = (int)((Z - 1867216.25) / 36524.25);
+                A = Z + 1 + a - (int)(a / 4); 
+            }
+
+            int B = A + 1524;
+            int C = (int)((B - 122.1) / 365.25);
+            int D = (int)(365.25 * C);
+            int E = (int)((B - D) / 30.6001);
+
+            double day = B - D - (int)(30.6001 * E) + F;
+            double month = E - 1;
+            if (E >= 14)
+            {
+                month = E - 13;
+            }
+
+            double year = C - 4716;
+            if (month <= 2)
+            {
+                year = C - 4715;
+            }
+            double hour = (day % 1) * 24;
+            double minute = (hour % 1) * 60;
+            int second = (int)((minute % 1) * 60);
+
+            //Console.WriteLine("{0}   {1}   {2}   {3}   {4}   {5}", 
+            //    month, Math.Floor(day), year, Math.Floor(hour), Math.Floor(minute), second);
+
+            double[] calendar = {(month), (Math.Floor(day)), (year), (Math.Floor(hour)), (Math.Floor(minute)), (second)};
+            return calendar;
+        }
+
         static double julianTransit(double _j, double m, double lng)
         {
             m = m * (Math.PI / 180);
@@ -132,6 +216,12 @@ namespace SunriseSunset
         static double meanAnomally(double _j)
         {
             return  ((357.5291 + 0.98560028 * (_j - 2451545)) % 360);
+        }
+
+        static void printSunriseSunset(double[] sunrise, double[] sunset)
+        {
+            Console.WriteLine("\nSunrise: {0}/{1}/{2} at {3}:{4}:{5}", sunrise[0], sunrise[1], sunrise[2], sunrise[3], sunrise[4], sunrise[5]);
+            Console.WriteLine(  "Sunset:  {0}/{1}/{2} at {3}:{4}:{5}\n", sunset[0], sunset[1], sunset[2], sunset[3], sunset[4], sunset[5]);
         }
 
         static double sunDeclination(double lng)
@@ -178,64 +268,34 @@ namespace SunriseSunset
             return _leapYears;
         }
 
-        class Location
+        public class Location
         {
-            private static double latitude;
-            private static double longitude;
-            private static double sunrise;
-            private static double sunset;
 
-            #region Setters
-
-            public double Latitude {
+            public double Latitude
+            {
                 get;
                 set;
             }
-            public void setLatitude(double _latitude)
+
+            public double Longitude
             {
-                latitude = _latitude;
+                get;
+                set;
             }
 
-            public void setLongitude(double _longitude)
+            public double[] Sunrise
             {
-                longitude = _longitude;
+                get;
+                set;
             }
 
-            public void setSunrise(double _sunrise)
+            public double[] Sunset
             {
-                sunrise = _sunrise;
+                get;
+                set;
             }
-
-            public void setSunset(double _sunset)
-            {
-                sunset = _sunset;
-            }
-
-            #endregion
-
-            #region Getters
-
-            public double getLatitude()
-            {
-                return latitude;
-            }
-
-            public double getLongitude()
-            {
-                return longitude;
-            }
-
-            public double getSunrise()
-            {
-                return sunrise;
-            }
-
-            public double getSunset()
-            {
-                return sunset;
-            }
-
-            #endregion
+            
+            
         }
     }
 } 
